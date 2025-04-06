@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 
-const quiz = [
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  answer: string;
+}
+
+const quiz: QuizQuestion[] = [
   // Mamíferos
   { question: "Os mamíferos têm pele coberta por quê?", options: ["Escamas", "Pelos", "Penas"], answer: "Pelos" },
   { question: "Como os mamíferos normalmente se movem?", options: ["Voando", "Andando ou correndo", "Rastejando"], answer: "Andando ou correndo" },
   { question: "Os filhotes dos mamíferos nascem de ovos?", options: ["Sim", "Não"], answer: "Não" },
   { question: "Como os mamíferos respiram?", options: ["Brânquias", "Pulmões", "Pele"], answer: "Pulmões" },
   { question: "Qual é o único mamífero que voa?", options: ["Morcego", "Águia", "Pato"], answer: "Morcego" },
-  
+
   // Aves
   { question: "As aves são cobertas por quê?", options: ["Pelos", "Escamas", "Penas"], answer: "Penas" },
   { question: "Todas as aves voam?", options: ["Sim", "Não"], answer: "Não" },
@@ -51,13 +57,15 @@ export default function QuizAnimais() {
   const [progress, setProgress] = useState(0);
   const [feedback, setFeedback] = useState("");
 
-  const current = quiz[index];
+  const current = !finished ? quiz[index] : null;
 
   useEffect(() => {
     setProgress((index / quiz.length) * 100);
   }, [index]);
 
-  const handleAnswer = (option) => {
+  const handleAnswer = (option: string) => {
+    if (!current) return;
+
     const isCorrect = option === current.answer;
     if (isCorrect) {
       setScore(score + 1);
@@ -82,11 +90,11 @@ export default function QuizAnimais() {
         <div style={{ width: `${progress}%`, height: "100%", background: "green" }}></div>
       </div>
 
-      {!finished ? (
+      {!finished && current ? (
         <div style={{ border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
           <h2 style={{ fontSize: "1.25rem", fontWeight: "600" }}>{current.question}</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "1rem" }}>
-            {current.options.map((option, i) => (
+            {current.options.map((option: string, i: number) => (
               <button
                 key={i}
                 onClick={() => handleAnswer(option)}
